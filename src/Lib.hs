@@ -156,12 +156,6 @@ someFunc = let
                      insert (_shoppingCartUserAddresses shoppingCartDb) $
                      insertExpressions addresses
 
-{- !!!! It's OK -}
-                   addresses' <- runSelectReturningList $ select (all_ (_shoppingCartUsers shoppingCartDb))
-                   liftIO $ mapM_ print addresses'
-
-                   liftIO $ putStrLn "======================================"
-
 {- 
 !!! It's wrong: 
 
@@ -170,8 +164,8 @@ SELECT "t0"."id" AS "res0", "t0"."address1" AS "res1", "t0"."address2" AS "res2"
 simple-exe: ConversionFailed {errSQLType = "NULL", errHaskellType = "Int", errMessage = "need an int"}
 
 -}
-                   addresses'' <- runSelectReturningList $ select (all_ (shoppingCartDb ^. shoppingCartUserAddresses))
-                   liftIO $ mapM_ print addresses''
+                   addresses' <- runSelectReturningList $ select (all_ (shoppingCartDb ^. shoppingCartUserAddresses))
+                   liftIO $ mapM_ print addresses'
 
 
 
