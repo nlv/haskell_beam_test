@@ -49,6 +49,8 @@ data ShoppingCartDb f = ShoppingCartDb
 
 instance Database be ShoppingCartDb
 
+{- ------------------------------------------- -}
+
 someFunc :: IO ()
 someFunc = let u = User "john@example.com" "John" "Smith" "password!" :: User 
                userKey = (UserId "john@doe.org") :: UserId
@@ -62,24 +64,22 @@ someFunc = let u = User "john@example.com" "John" "Smith" "password!" :: User
                in do
                  conn <- open "shoppingcart1.db"
 
-                 runBeamSqliteDebug putStrLn {- for debug output -} conn $ runInsert $
-                   insert (_shoppingCartUsers shoppingCartDb) $
-                   insertValues [ User "james@pallo.com" "James" "Pallo" "b4cc344d25a2efe540adbf2678e2304c" {- james -}
-                                , User "betty@sims.com" "Betty" "Sims" "82b054bd83ffad9b6cf8bdb98ce3cc2f" {- betty -}
-                                , User "james@oreily.com" "James" "O'Reily" "b4cc344d25a2efe540adbf2678e2304c" {- james -}
-                                , User "sam@sophitz.com" "Sam" "Sophitz" "332532dcfaa1cbf61e2a266bd723612c" {- sam -}
-                                , User "sam@jely.com" "Sam" "Jely" "332532dcfaa1cbf61e2a266bd723612c" {- sam -} ]
+                 runBeamSqliteDebug putStrLn {- for debug output -} conn $ do
+                   runInsert $  
+                     insert (_shoppingCartUsers shoppingCartDb) $
+                     insertValues [ User "james@pallo.com" "James" "Pallo" "b4cc344d25a2efe540adbf2678e2304c" {- james -}
+                                  , User "betty@sims.com" "Betty" "Sims" "82b054bd83ffad9b6cf8bdb98ce3cc2f" {- betty -}
+                                  , User "james@oreily.com" "James" "O'Reily" "b4cc344d25a2efe540adbf2678e2304c" {- james -}
+                                  , User "sam@sophitz.com" "Sam" "Sophitz" "332532dcfaa1cbf61e2a266bd723612c" {- sam -}
+                                  , User "sam@jely.com" "Sam" "Jely" "332532dcfaa1cbf61e2a266bd723612c" {- sam -} ]
 
-                 runBeamSqliteDebug putStrLn conn $ do
                    users <- runSelectReturningList (select boundedQuery)
                    mapM_ (liftIO . putStrLn . show) users
 
                  
-                 runBeamSqliteDebug putStrLn conn $ do
                    Just c <- runSelectReturningOne $ select userCount
                    liftIO $ putStrLn ("We have " ++ show c ++ " users in the database")
 
-                 runBeamSqliteDebug putStrLn conn $ do
                    countedByName <- runSelectReturningList $ select numberOfUsersByName
                    mapM_ (liftIO . putStrLn . show) countedByName
 
