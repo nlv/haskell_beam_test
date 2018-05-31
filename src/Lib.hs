@@ -162,20 +162,19 @@ someFunc = let
 SELECT "t0"."id" AS "res0", "t0"."address1" AS "res1", "t0"."address2" AS "res2", "t0"."city" AS "res3", "t0"."state" AS "res4", "t0"."zip" AS "res5", "t0"."for_user__email" AS "res6" FROM "addresses" AS "t0";
 -- With values: []
 simple-exe: ConversionFailed {errSQLType = "NULL", errHaskellType = "Int", errMessage = "need an int"}
-
+-}
                    addresses' <- runSelectReturningList $ select (all_ (shoppingCartDb ^. shoppingCartUserAddresses))
                    liftIO $ mapM_ print addresses'
--}
 
 {- 
 !!! Run time error (selecting addresses) !!!
+-}
 
                    allPairs <- runSelectReturningList $ select $ do
                                  address <- all_ (shoppingCartDb ^. shoppingCartUserAddresses)
                                  user <- related_ (shoppingCartDb ^. shoppingCartUsers) (_addressForUser address)
                                  pure (user, address)
                    liftIO $ mapM_ print allPairs
--}
 
                    runUpdate $
                         save (shoppingCartDb ^. shoppingCartUsers) (james { _userPassword = "52a516ca6df436828d9c0d26e31ef704" })
@@ -194,10 +193,10 @@ simple-exe: ConversionFailed {errSQLType = "NULL", errHaskellType = "Int", errMe
              
 {- 
 !!! Run time error (selecting addresses) !!!
+-}
                    addresses <- runSelectReturningList $ select $ all_ (shoppingCartDb ^. shoppingCartUserAddresses)
 
                    liftIO $ mapM_ print addresses
--}
 
                    runDelete $
                     delete (shoppingCartDb ^. shoppingCartUserAddresses)
